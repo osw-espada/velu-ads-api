@@ -38,6 +38,7 @@ class Handler extends ExceptionHandler
                     $status_code = 401;
 
                     break;
+                case "Illuminate\Validation\ValidationException":
                 case "ParseError":
                 case "Error":
                 case "UnexpectedValueException":
