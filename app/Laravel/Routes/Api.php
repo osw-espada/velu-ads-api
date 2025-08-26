@@ -10,6 +10,7 @@ Route::group(['as' => "api.",
     Route::get('/','SettingController@health')->name('health');
 
     Route::group(['prefix' => "checkout",'as' => 'checkout.'],function() {
+        Route::get('/', 'CheckoutController@search')->name('search');
         Route::post('/', 'CheckoutController@generate')->name('generate');
     });
 
