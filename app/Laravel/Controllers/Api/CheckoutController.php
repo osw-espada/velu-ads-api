@@ -13,7 +13,7 @@ use App\Laravel\Traits\ResponseGenerator;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use App\Laravel\Transformers\{TransformerManager};
+use App\Laravel\Transformers\{TransformerManager,TransactionTransformer};
 
 use Stripe\Stripe;
 use Stripe\Checkout\Session as CheckoutSession;
@@ -30,6 +30,29 @@ class CheckoutController extends Controller
         parent::__construct();
         $this->transformer = new TransformerManager;
         $this->guard = "api";
+    }
+
+    public function search(PageRequest $request){
+        $reference_number = strtolower($request->get('reference_number'));
+
+        $transaction = Transaction::whereRaw("LOWER(reference_number) = '{$reference_number}'")->first();
+
+        if(!$transaction){
+            $this->response['status'] = FALSE;
+            $this->response['status_code'] = "NOT_FOUND";
+            $this->response['msg'] = "Transaction not found.";
+            $this->response_code = 409;
+            goto callback;
+        }
+
+        $this->response['status'] = TRUE;
+        $this->response['status_code'] = "TRANSACTION_DETAIL";
+        $this->response['msg'] = "Transaction details - {$transaction->reference_number}.";
+        $this->response['data'] = $this->transformer->transform($transaction, new TransactionTransformer, 'item');
+        $this->response_code = 200;
+
+        callback:
+        return response()->json($this->api_response($this->response), $this->response_code);
     }
 
     public function generate(CheckoutRequest $request)
@@ -73,8 +96,10 @@ class CheckoutController extends Controller
         $this->response['status'] = TRUE;
         $this->response['status_code'] = "CHECKOUT_URL";
         $this->response['msg'] = "Checkout URL generated";
+        $this->response['data'] = $this->transformer->transform($transaction, new TransactionTransformer, 'item');
         $this->response['checkout_url'] = $transaction->checkout_url;
         $this->response_code = 200;
+
         callback:
         return response()->json($this->api_response($this->response), $this->response_code);
 
