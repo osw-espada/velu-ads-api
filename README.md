@@ -1,4 +1,4 @@
-# Your Project Name
+# VELU ADS API
 
 A modern Laravel application built with Laravel 12 (PHP 8.2+). This README covers local setup, development workflow, testing, quality tools, optional Docker usage, and deployment notes.
 
