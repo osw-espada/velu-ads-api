@@ -14,6 +14,12 @@ Route::group(['as' => "api.",
         Route::post('/', 'CheckoutController@generate')->name('generate');
     });
 
+    Route::group(['prefix' => "transactions",'as' => 'transaction.'],function() {
+        Route::get('/', 'CheckoutController@index')->name('index');
+        Route::destroy('/', 'TransactionController@destroy')->name('destroy');
+        Route::destroy('{id}', 'TransactionController@delete')->name('delete');
+    });
+
     Route::group(['prefix' => "auth",'as' => 'auth.'],function(){
         Route::post('register','AuthenticationController@register')->name('register');
         Route::post('login','AuthenticationController@login')->name('login');
