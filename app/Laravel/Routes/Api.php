@@ -16,8 +16,8 @@ Route::group(['as' => "api.",
 
     Route::group(['prefix' => "transactions",'as' => 'transaction.'],function() {
         Route::get('/', 'CheckoutController@index')->name('index');
-        Route::destroy('/', 'TransactionController@destroy')->name('destroy');
-        Route::destroy('{id}', 'TransactionController@delete')->name('delete');
+        Route::delete('/', 'TransactionController@destroy')->name('destroy');
+        Route::delete('{id}', 'TransactionController@delete')->name('delete');
     });
 
     Route::group(['prefix' => "auth",'as' => 'auth.'],function(){
